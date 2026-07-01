@@ -1,0 +1,2 @@
+{"version": "1.0", "source_language": "zh", "target_language": "", "metadata": {"input_audio": "input\\audio.wav", "input_video": "input\\video.mp4", "duration": 3.008, "sample_rate": 16000}}
+{"id": "s0000", "text": "没 有 没 有 有 没 有 没 有 没 有", "translation": "", "start": 0.29, "end": 2.79, "duration": 2.5, "pause": 0.0, "speech_rate": 1.0, "emotion": "neutral", "confidence": 1.0, "words": [], "metadata": {}}

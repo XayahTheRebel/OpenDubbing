@@ -1,0 +1,51 @@
+# 核心流程测试配置（不含 Hallo3 face）
+
+target_language: "en"
+sample_rate: 16000
+
+workspace:
+  root: "./workspace"
+
+providers:
+  asr:
+    name: whisper
+    model: base
+    options:
+      source_language: auto
+
+  forced_alignment:
+    name: mock_forced_aligner
+
+  translation:
+    name: nllb
+    model: "facebook/nllb-200-distilled-600M"
+    options:
+      target_language: "en"
+      device: "cpu"
+
+  tts:
+    name: edge_tts
+    options:
+      voice: "en-US-AriaNeural"
+
+pipeline:
+  steps:
+    - input
+    - asr
+    - timeline
+    - translation
+    - length_optimizer
+    - prosody
+    - tts
+    - audio_post
+    - video_post
+    - output
+
+output:
+  filename: "output.mp4"
+  format: "mp4"
+  codec: "libx264"
+
+api:
+  host: "127.0.0.1"
+  port: 8000

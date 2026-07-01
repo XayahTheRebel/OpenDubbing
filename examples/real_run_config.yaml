@@ -1,0 +1,58 @@
+# 真实运行配置：英文输出、Whisper ASR、NLLB 翻译、Edge TTS、Hallo3 口型
+
+target_language: "en"
+sample_rate: 16000
+
+workspace:
+  root: "./workspace"
+
+providers:
+  asr:
+    name: whisper
+    model: base
+    options:
+      source_language: auto
+
+  forced_alignment:
+    name: mock_forced_aligner
+
+  translation:
+    name: nllb
+    model: "facebook/nllb-200-distilled-600M"
+    options:
+      target_language: "en"
+      device: "cpu"
+
+  tts:
+    name: edge_tts
+    options:
+      voice: "en-US-AriaNeural"
+
+  face:
+    name: hallo3
+    options:
+      # Hallo3 uses the prompt as the text condition for generated video.
+      prompt: "A person speaking naturally"
+
+pipeline:
+  steps:
+    - input
+    - asr
+    - timeline
+    - translation
+    - length_optimizer
+    - prosody
+    - tts
+    - audio_post
+    - face
+    - video_post
+    - output
+
+output:
+  filename: "output.mp4"
+  format: "mp4"
+  codec: "libx264"
+
+api:
+  host: "127.0.0.1"
+  port: 8000

@@ -1,0 +1,66 @@
+target_language: "zh"
+sample_rate: 16000
+
+workspace:
+  root: "./workspace"
+
+providers:
+  audio_separation:
+    name: demucs
+    model: "htdemucs"
+    options: { device: "auto" }
+  noise_reduction:
+    name: deep_filter_net3
+  vad:
+    name: silero_vad
+    options: { threshold: 0.5, min_silence_ms: 500 }
+  asr:
+    # Use mock_asr for smoke testing when heavy ML dependencies are not installed.
+    name: mock_asr
+    options: { language: "en" }
+    # Production: name: qwen3_asr
+    #             options: { source_language: "auto" }
+  forced_alignment:
+    # Use mock_forced_aligner for smoke testing when heavy ML deps are absent.
+    name: mock_forced_aligner
+    # Production: name: qwen3_forced_aligner
+  translation:
+    # Use mock_translation for smoke testing when heavy ML deps are absent.
+    name: mock_translation
+    # Production alternatives:
+    #   name: nllb
+    #   model: "facebook/nllb-200-distilled-600M"
+    #   name: gpt / claude / gemini (requires API key)
+  tts:
+    # Use mock_tts for smoke testing when heavy ML deps are absent.
+    name: mock_tts
+    options: { duration: 1.0 }
+    # Production: name: cosyvoice2
+    #             options: { device: "auto" }
+  face:
+    # Use mock_face for smoke testing when heavy ML deps are absent.
+    name: mock_face
+    # Production: name: hallo3
+
+pipeline:
+  steps:
+    - input
+    - asr
+    - timeline
+    - translation
+    - length_optimizer
+    - prosody
+    - tts
+    - audio_post
+    - face
+    - video_post
+    - output
+
+output:
+  filename: "output.mp4"
+  format: "mp4"
+  codec: "libx264"
+
+api:
+  host: "127.0.0.1"
+  port: 8000
