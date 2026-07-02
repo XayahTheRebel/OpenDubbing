@@ -102,6 +102,10 @@ class PipelineOrchestrator:
 
             if self.cache.should_skip(step, resume):
                 logger.info("skipping_cached_step", step=step)
+                try:
+                    timeline = self.cache.load(step)
+                except Exception:
+                    logger.warning("failed_to_load_skipped_cache", step=step)
                 self._emit(step, "skipped")
                 continue
 

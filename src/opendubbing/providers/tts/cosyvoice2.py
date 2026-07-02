@@ -69,7 +69,7 @@ class CosyVoice2Provider(Provider):
         out_path = Path(inputs["out_path"])
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
-        script = Path(__file__).resolve().parents[3] / "scripts" / "cosyvoice2_infer.py"
+        script = Path(__file__).resolve().parents[4] / "scripts" / "cosyvoice2_infer.py"
         cmd = [
             "python",
             str(script),

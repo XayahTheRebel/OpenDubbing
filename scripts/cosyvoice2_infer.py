@@ -37,6 +37,19 @@ def main() -> None:
         ref_path = Path(args.reference_audio)
         if not ref_path.exists():
             raise FileNotFoundError(f"Reference audio not found: {ref_path}")
+
+        # CosyVoice2's zero-shot frontend cannot handle reference audio > 30s.
+        # Load the reference, truncate to the first 30s, and write a temp file.
+        ref_audio, ref_sr = sf.read(str(ref_path), dtype=np.float32)
+        max_ref_samples = int(30 * ref_sr)
+        if ref_audio.shape[0] > max_ref_samples:
+            ref_audio = ref_audio[:max_ref_samples]
+            truncated_ref = ref_path.with_name(
+                f"{ref_path.stem}_truncated{ref_path.suffix}"
+            )
+            sf.write(str(truncated_ref), ref_audio, ref_sr)
+            ref_path = truncated_ref
+
         result = list(
             cosyvoice.inference_zero_shot(
                 args.text,
