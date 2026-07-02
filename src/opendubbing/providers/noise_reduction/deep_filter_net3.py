@@ -5,8 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-import torchaudio
-
 from opendubbing.core.interfaces import Provider, ProviderModelLoadError
 
 
@@ -39,6 +37,12 @@ class DeepFilterNet3Provider(Provider):
             self.load_model()
         assert self._model is not None and self._state is not None
 
+        try:
+            import torchaudio
+        except ImportError as exc:
+            raise ProviderModelLoadError(
+                "torchaudio not installed; install opendubbing[heavy]"
+            ) from exc
         from df import enhance
 
         audio_path = Path(inputs["audio"])

@@ -6,7 +6,6 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import pytest
-import torch
 
 from opendubbing.core.interfaces import ProviderModelLoadError
 from opendubbing.providers.noise_reduction.deep_filter_net3 import (
@@ -23,6 +22,8 @@ class TestDeepFilterNet3Provider:
             provider.load_model()
 
     def test_infer_writes_enhanced_audio(self, monkeypatch, tmp_path, silent_wav):
+        torchaudio = pytest.importorskip("torchaudio")
+        torch = pytest.importorskip("torch")
         audio = silent_wav(duration=1.0)
         out_path = tmp_path / "enhanced.wav"
 
