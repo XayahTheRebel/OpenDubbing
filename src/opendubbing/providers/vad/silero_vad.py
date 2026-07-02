@@ -17,7 +17,7 @@ class SileroVADProvider(Provider):
     def initialize(self, config: dict[str, Any]) -> None:
         self.config = config
         self.options = config.get("options", {})
-        self._model = None
+        self._model: Any = None
 
     def load_model(self) -> None:
         try:

@@ -19,7 +19,7 @@ class Qwen3ForcedAlignerProvider(Provider):
 
     def initialize(self, config: dict[str, Any]) -> None:
         self.config = config
-        self.model = config.get("model", "fa-zh")
+        self.model = config.get("model") or "fa-zh"
         self.options = config.get("options", {})
         self._model = None
 

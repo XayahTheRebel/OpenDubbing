@@ -40,7 +40,15 @@ providers:
   face:
     # Use mock_face for smoke testing when heavy ML deps are absent.
     name: mock_face
-    # Production: name: hallo3
+    # Production: MuseTalk 1.5 (requires C:\MuseTalk and conda env "MuseTalk")
+    # name: musetalk
+    # options:
+    #   musetalk_root: "C:\\MuseTalk"
+    #   conda_env: "MuseTalk"
+    #   version: "v15"
+    #   vae_type: "sd-vae-ft-mse"
+    #   gpu_id: 0
+    #   batch_size: 8
 
 pipeline:
   steps:

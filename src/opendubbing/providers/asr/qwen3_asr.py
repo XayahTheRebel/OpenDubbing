@@ -19,7 +19,7 @@ class Qwen3ASRProvider(Provider):
 
     def initialize(self, config: dict[str, Any]) -> None:
         self.config = config
-        self.model = config.get("model", "paraformer-zh")
+        self.model = config.get("model") or "paraformer-zh"
         self.options = config.get("options", {})
         self._model = None
 

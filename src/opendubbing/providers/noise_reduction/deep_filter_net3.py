@@ -5,6 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+import torchaudio
+
 from opendubbing.core.interfaces import Provider, ProviderModelLoadError
 
 
@@ -33,15 +35,19 @@ class DeepFilterNet3Provider(Provider):
             raise ProviderModelLoadError("Failed to load DeepFilterNet3 model") from exc
 
     def infer(self, inputs: dict[str, Any]) -> dict[str, Any]:
-        if self._model is None:
+        if self._model is None or self._state is None:
             self.load_model()
+        assert self._model is not None and self._state is not None
 
         from df import enhance
 
         audio_path = Path(inputs["audio"])
         out_path = Path(inputs.get("out_path", audio_path.parent / "enhanced.wav"))
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        enhance(self._model, self._state, str(audio_path), output_file=str(out_path))
+
+        wav, sr = torchaudio.load(str(audio_path))
+        enhanced = enhance(self._model, self._state, wav)
+        torchaudio.save(str(out_path), enhanced, sample_rate=sr)
         return {"enhanced": str(out_path)}
 
     def release(self) -> None:

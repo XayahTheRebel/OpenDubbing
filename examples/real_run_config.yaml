@@ -1,38 +1,45 @@
-# 真实运行配置：英文输出、Whisper ASR、NLLB 翻译、Edge TTS、Hallo3 口型
+# 真实运行配置：中文输出、Qwen3 ASR、NLLB 翻译、CosyVoice2 TTS、MuseTalk 1.5 口型
 
-target_language: "en"
+target_language: "zh"
 sample_rate: 16000
 
 workspace:
-  root: "./workspace"
+  root: "./workspace_real_run"
 
 providers:
+  audio_separation:
+    name: demucs
+    model: "htdemucs"
+    options: { device: "auto" }
+  noise_reduction:
+    name: deep_filter_net3
+  vad:
+    name: silero_vad
+    options: { threshold: 0.5, min_silence_ms: 500 }
   asr:
-    name: whisper
-    model: base
-    options:
-      source_language: auto
-
+    name: qwen3_asr
+    options: { source_language: "auto" }
   forced_alignment:
-    name: mock_forced_aligner
-
+    name: qwen3_forced_aligner
   translation:
     name: nllb
     model: "facebook/nllb-200-distilled-600M"
-    options:
-      target_language: "en"
-      device: "cpu"
-
   tts:
-    name: edge_tts
+    name: cosyvoice2
+    model: "C:\\CosyVoice\\pretrained_models\\CosyVoice2-0.5B"
     options:
-      voice: "en-US-AriaNeural"
-
+      conda_env: "CosyVoice"
+      sample_rate: 22050
   face:
-    name: hallo3
+    name: musetalk
     options:
-      # Hallo3 uses the prompt as the text condition for generated video.
-      prompt: "A person speaking naturally"
+      musetalk_root: "C:\\MuseTalk"
+      conda_env: "MuseTalk"
+      version: "v15"
+      vae_type: "sd-vae-ft-mse"
+      gpu_id: 0
+      batch_size: 8
+      use_float16: false
 
 pipeline:
   steps:

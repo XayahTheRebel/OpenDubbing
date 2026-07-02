@@ -1,0 +1,52 @@
+# MuseTalk-only smoke test: everything else mocked, only face uses real MuseTalk.
+
+target_language: "zh"
+sample_rate: 16000
+
+workspace:
+  root: "./workspace_musetalk_smoke"
+
+providers:
+  asr:
+    name: mock_asr
+    options: { language: "en" }
+  forced_alignment:
+    name: mock_forced_aligner
+  translation:
+    name: mock_translation
+  tts:
+    name: mock_tts
+    options: { duration: 1.0 }
+  face:
+    name: musetalk
+    options:
+      musetalk_root: "C:\\MuseTalk"
+      conda_env: "MuseTalk"
+      version: "v15"
+      vae_type: "sd-vae-ft-mse"
+      gpu_id: 0
+      batch_size: 4
+      use_float16: false
+
+pipeline:
+  steps:
+    - input
+    - asr
+    - timeline
+    - translation
+    - length_optimizer
+    - prosody
+    - tts
+    - audio_post
+    - face
+    - video_post
+    - output
+
+output:
+  filename: "musetalk_output.mp4"
+  format: "mp4"
+  codec: "libx264"
+
+api:
+  host: "127.0.0.1"
+  port: 8000

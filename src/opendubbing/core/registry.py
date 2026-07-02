@@ -84,8 +84,8 @@ def create_default_registry() -> ProviderRegistry:
     from opendubbing.providers.asr.qwen3_asr import Qwen3ASRProvider
     from opendubbing.providers.asr.whisper_asr import WhisperASRProvider
     from opendubbing.providers.audio_separation.demucs import DemucsProvider
-    from opendubbing.providers.face.hallo3 import Hallo3Provider
     from opendubbing.providers.face.mock_face import MockFaceProvider
+    from opendubbing.providers.face.musetalk import MuseTalkProvider
     from opendubbing.providers.forced_alignment.mock_forced_aligner import (
         MockForcedAlignerProvider,
     )
@@ -124,6 +124,6 @@ def create_default_registry() -> ProviderRegistry:
     registry.register("tts", "cosyvoice2", CosyVoice2Provider)
     registry.register("tts", "edge_tts", EdgeTTSProvider)
     registry.register("tts", "mock_tts", MockTTSProvider)
-    registry.register("face", "hallo3", Hallo3Provider)
+    registry.register("face", "musetalk", MuseTalkProvider)
     registry.register("face", "mock_face", MockFaceProvider)
     return registry

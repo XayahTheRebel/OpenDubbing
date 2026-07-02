@@ -6,6 +6,7 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import pytest
+import torch
 
 from opendubbing.core.interfaces import ProviderModelLoadError
 from opendubbing.providers.noise_reduction.deep_filter_net3 import (
@@ -28,7 +29,7 @@ class TestDeepFilterNet3Provider:
         fake_model = object()
         fake_state = object()
         fake_init_df = MagicMock(return_value=(fake_model, fake_state, None))
-        fake_enhance = MagicMock()
+        fake_enhance = MagicMock(return_value=torch.zeros(1, 16000))
 
         fake_df = SimpleNamespace(init_df=fake_init_df, enhance=fake_enhance)
         monkeypatch.setitem(__import__("sys").modules, "df", fake_df)
@@ -40,6 +41,9 @@ class TestDeepFilterNet3Provider:
         result = provider.infer({"audio": audio, "out_path": str(out_path)})
 
         assert result["enhanced"] == str(out_path)
+        assert out_path.exists()
         fake_enhance.assert_called_once()
         _, args, kwargs = fake_enhance.mock_calls[0]
-        assert kwargs.get("output_file") == str(out_path)
+        assert len(args) == 3
+        assert args[0] is fake_model
+        assert args[1] is fake_state
